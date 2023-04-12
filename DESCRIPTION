@@ -1,0 +1,22 @@
+Package: solaredge
+Title: Read and process data from the SolarEdge API
+Version: 0.0.0.9000
+Authors@R: 
+    person("Kent", "Johnson", , "kent3737@gmail.com", 
+      role = c("aut", "cre"))
+Description: Reads solar panel production data from the SolarEdge
+    API (https://knowledge-center.solaredge.com/sites/kc/files/se_monitoring_api.pdf).
+    Parses to data frame and visualizes results.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports: 
+    dplyr,
+    hms,
+    httr2,
+    jsonlite,
+    lubridate,
+    rlang,
+    stringr,
+    tidyr
