@@ -12,11 +12,16 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports: 
+    DBI,
+    dbplyr,
     dplyr,
+    duckdb,
     hms,
     httr2,
     jsonlite,
     lubridate,
     rlang,
     stringr,
-    tidyr
+    tibble,
+    tidyr,
+    withr
