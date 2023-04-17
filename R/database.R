@@ -38,6 +38,20 @@ init_db = function(start_date) {
   }
 }
 
+#' Get a `dplyr` table backed by the Energy table
+#' @returns A table
+energy_table = function(envir=parent.frame()) {
+  con = local_db(envir)
+  dplyr::tbl(con, 'Energy')
+}
+
+#' Get a `dplyr` table backed by the Power table
+#' @returns A table
+power_table = function(envir=parent.frame()) {
+  con = local_db(envir)
+  dplyr::tbl(con, 'Power')
+}
+
 #' Update the energy table with the latest
 #' @returns A data frame with columns `date`, `value`, `unit`,
 #' `year`, `month`, `day`, `time`

@@ -22,3 +22,8 @@ local_db = function(envir = parent.frame()) {
 test_local_db = function() {
   con = local_db()
 }
+
+power = power_table()
+power |> summarize(.by=c(year, month, day), total=sum(value)) |> collect()
+
+withr::deferred_run()
