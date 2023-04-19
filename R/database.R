@@ -80,14 +80,20 @@ update_energy = function() {
       dplyr::filter(date > last_entry)
   }
   
-  if (nrow(new_energy)==0) return() # No new data
+  if (nrow(new_energy)==0) {
+    cat('No new data.\n')
+    return()
+  } else {
+    cat('Received', nrow(new_energy), 'new entries.\n')
+  }
   
   DBI::dbWriteTable(con, name='Energy', value=new_energy,
                    append=TRUE, overwrite=FALSE)
   
   # Update last_date
   last_date = as.Date(max(new_energy$date))
-  DBI::dbExecute(con, "update Dates set date=? where name='last_energy'", 
+  DBI::dbExecute(con, 
+                 "update Dates set date=? where name='last_energy'", 
                  list(last_date))
 }
 
@@ -122,7 +128,12 @@ update_power = function() {
       dplyr::filter(date > last_entry)
   }
   
-  if (nrow(new_power)==0) return() # No new data
+  if (nrow(new_power)==0) {
+    cat('No new data.\n')
+    return()
+  } else {
+    cat('Received', nrow(new_power), 'new entries.\n')
+  }
   
   DBI::dbWriteTable(con, name='Power', value=new_power,
                    append=TRUE, overwrite=FALSE)
