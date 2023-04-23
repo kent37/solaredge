@@ -7,3 +7,10 @@ make_date = function(d) {
     d
   else stop('Invalid date format: ', d)
 }
+
+#' Update the database and plot power
+update_and_plot = function() {
+  update_energy()
+  update_power()
+  power_chart()
+}

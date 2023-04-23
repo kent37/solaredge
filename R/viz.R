@@ -19,9 +19,8 @@ power_chart = function(start_date=today()) {
            label=str_glue('{round(kwh, 1)} KWh'))
   
   total_energy = sum(energy$kwh)
-  # ggplot(daily, aes(time, day, height=value, group=day)) +
-  #   geom_density_ridges(stat = "identity", scale = 1.5) +
-  #   theme_minimal()
+  days = diff(range(daily$day)) + 1
+  daily_average = total_energy / days
   
   ggplot(daily, aes(time, value/1000)) +
     geom_line(linewidth=0.4, aes(group=day)) +
@@ -35,7 +34,10 @@ power_chart = function(start_date=today()) {
     labs(x='Time of day', y='KW',
          title=str_glue('Daily power generation (KW) ',
          '{format(start_date, "%B %Y")}'),
-         subtitle=str_glue('Total energy generation: {round(total_energy, 1)} KWh')) +
+         subtitle=str_glue('Total energy generation: ',
+         '{round(total_energy, 0)} KWh, ',
+         'daily average {round(daily_average, 0)} KWh, ',
+         'monthly estimate {round(30*daily_average, 0)} KWh')) +
     facet_wrap(~day) +
     theme_minimal()
 }

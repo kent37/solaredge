@@ -17,7 +17,6 @@ Depends:
     dplyr,
     duckdb,
     ggplot2,
-    ggridges,
     hms,
     httr2,
     jsonlite,
