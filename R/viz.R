@@ -5,9 +5,10 @@
 #' @export
 power_chart = function(start_date=today()) {
   start_date = floor_date(make_date(start_date), 'month')
+  end_date = ceiling_date(make_date(start_date), 'month')
   power = power_table() 
   daily = power |> 
-    filter(date >= start_date) |> 
+    filter(date >= start_date, date <= end_date) |> 
     collect() |> 
     mutate(time=hms::hms(as.numeric(time)))
     
@@ -39,6 +40,27 @@ power_chart = function(start_date=today()) {
          'daily average {round(daily_average, 0)} KWh, ',
          'monthly estimate {round(30*daily_average, 0)} KWh')) +
     facet_wrap(~day) +
+    theme_minimal()
+}
+
+#' Daily maximum power
+#' @export
+daily_max_power_chart = function() {
+  power = power_table() 
+  daily_max = power |> 
+    summarize(.by=c(year, month, day), 
+              max_power = max(value),
+              date=min(date)) |> 
+    collect()
+
+  max_max = max(daily_max$max_power)
+  
+  ggplot(daily_max, aes(date, max_power)) +
+    geom_line() +
+    geom_hline(yintercept=max_max, linetype=2, color='gray') +
+    labs(x='Date', y='Maximum power (W)',
+         title='Daily maximum power generation',
+         subtitle=str_glue('Overall maximum {max_max/1000} kW')) +
     theme_minimal()
 }
 
