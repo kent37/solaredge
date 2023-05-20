@@ -17,7 +17,7 @@ power_chart = function(start_date=today()) {
     filter(year==year(start_date), month==month(start_date)) |> 
     collect() |> 
     mutate(kwh = value / 1000,
-           label=str_glue('{round(kwh, 1)} KWh'))
+           label=str_glue('{round(kwh, 1)} kWh'))
   
   total_energy = sum(energy$kwh)
   days = diff(range(daily$day)) + 1
@@ -36,9 +36,9 @@ power_chart = function(start_date=today()) {
          title=str_glue('Daily power generation (KW) ',
          '{format(start_date, "%B %Y")}'),
          subtitle=str_glue('Total energy generation: ',
-         '{round(total_energy, 0)} KWh, ',
-         'daily average {round(daily_average, 0)} KWh, ',
-         'monthly estimate {round(30*daily_average, 0)} KWh')) +
+         '{round(total_energy, 0)} kWh, ',
+         'daily average {round(daily_average, 0)} kWh, ',
+         'monthly estimate {round(30*daily_average, 0)} kWh')) +
     facet_wrap(~day) +
     theme_minimal()
 }
@@ -64,7 +64,7 @@ daily_max_power_chart = function() {
     theme_minimal()
 }
 
-#' Daily energy (KWh) for the year, by month
+#' Daily energy (kWh) for the year, by month
 #' @export
 energy_chart = function() {
   energy = energy_table()
@@ -74,7 +74,22 @@ energy_chart = function() {
   
   ggplot(monthly, aes(day, month, height=value/1000, group=month))  +
     geom_density_ridges(stat = "identity", scale = 1.5) +
-    labs(x='Day of month', y='KWh',
-         title=str_glue('Daily energy generation (KWh) ')) +
+    labs(x='Day of month', y='kWh',
+         title=str_glue('Daily energy generation (kWh) ')) +
+    theme_minimal()
+}
+
+daily_energy_chart = function() {
+  energy = energy_summary() |> 
+    slice_tail(n=-1) # First date has no usage
+  
+  ggplot(energy) +
+    #geom_step(color='darkgreen') +
+    geom_rect(aes(xmin = start_date, xmax = end_date, 
+                ymin = 0, ymax = daily_use),
+              color='darkgreen', fill='darkgreen') +
+    ylim(0, NA) +
+    labs(x='End date', y='Average daily use (kWh)',
+         title='Average daily energy use (kWh)') +
     theme_minimal()
 }

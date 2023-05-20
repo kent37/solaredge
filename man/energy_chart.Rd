@@ -2,10 +2,10 @@
 % Please edit documentation in R/viz.R
 \name{energy_chart}
 \alias{energy_chart}
-\title{Daily energy (KWh) for the year, by month}
+\title{Daily energy (kWh) for the year, by month}
 \usage{
 energy_chart()
 }
 \description{
-Daily energy (KWh) for the year, by month
+Daily energy (kWh) for the year, by month
 }

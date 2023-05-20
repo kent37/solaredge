@@ -156,6 +156,6 @@ local_db = function(envir = parent.frame()) {
 get_connection = function() {
   # dbdir = 'misc/solaredge.sqlite'
   # DBI::dbConnect(RSQLite::SQLite(), dbdir)
-  dbdir = 'misc/solaredge.duckdb'
+  dbdir = here::here('misc/solaredge.duckdb')
   DBI::dbConnect(duckdb::duckdb(), dbdir, read_only=FALSE)
 }

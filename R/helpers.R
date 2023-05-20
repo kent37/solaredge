@@ -9,6 +9,7 @@ make_date = function(d) {
 }
 
 #' Update the database and plot power
+#' @export
 update_and_plot = function() {
   update_energy()
   update_power()

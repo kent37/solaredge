@@ -2,10 +2,13 @@
 % Please edit documentation in R/viz.R
 \name{power_chart}
 \alias{power_chart}
-\title{15-minute power (watts) for the month, by day}
+\title{15-minute power (watts) for a month, by day}
 \usage{
-power_chart()
+power_chart(start_date = today())
+}
+\arguments{
+\item{start_date}{A date within the desired month}
 }
 \description{
-15-minute power (watts) for the month, by day
+15-minute power (watts) for a month, by day
 }
