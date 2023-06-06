@@ -84,10 +84,8 @@ daily_energy_chart = function() {
     slice_tail(n=-1) # First date has no usage
   
   ggplot(energy) +
-    #geom_step(color='darkgreen') +
-    geom_rect(aes(xmin = start_date, xmax = end_date, 
-                ymin = 0, ymax = daily_use),
-              color='darkgreen', fill='darkgreen') +
+    geom_step(aes(start_date, daily_use), color='darkgreen') +
+    geom_segment(aes(x=start_date, xend=end_date, y=daily_use, yend=daily_use), color='darkgreen') +
     ylim(0, NA) +
     labs(x='End date', y='Average daily use (kWh)',
          title='Average daily energy use (kWh)') +
