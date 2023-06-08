@@ -17,6 +17,7 @@ Depends:
     dplyr,
     duckdb,
     ggplot2,
+    ggridges,
     here,
     hms,
     httr2,
