@@ -9,7 +9,8 @@ energy_summary = function() {
   meter$generation = pmap_dbl(meter, energy_generation)
   meter |> 
     mutate(use = generation + meter_usage,
-           daily_use = use/as.integer(end_date-start_date)
+           daily_use = use/as.integer(end_date-start_date),
+           daily_generation = generation/as.integer(end_date-start_date)
            )
 }
 
