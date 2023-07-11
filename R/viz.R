@@ -72,9 +72,9 @@ energy_chart = function() {
   monthly = energy |> 
     collect()
   
-  ggplot(monthly, aes(day, month, height=value/1000, group=month))  +
-    geom_density_ridges(stat = "identity", scale = 1.5) +
-    labs(x='Day of month', y='kWh',
+  ggplot(monthly, aes(date, value/1000))  +
+    geom_line() +
+    labs(x='Date', y='kWh',
          title=str_glue('Daily energy generation (kWh) ')) +
     theme_minimal()
 }
