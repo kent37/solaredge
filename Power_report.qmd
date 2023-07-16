@@ -1,0 +1,50 @@
+---
+title: "Power and energy"
+format:
+  html:
+    embed-resources: true
+execute:
+  echo: false
+  message: false
+  warning: false
+---
+
+```{r libs}
+library(tidyverse)
+library(solaredge)
+
+```
+
+## Peak power
+
+The designed maximum power generation of the system is just over 6kW. 
+On the first three full days of operation, peak power of 6kW was sustained for several hours each day with over 45kWh generated each day.
+
+This chart shows power clearly peaking at 6kW on April 8-10. April 20
+comes close to this performance but does not match it.
+
+```{r april_power}
+power_chart('2023-04-10')
+```
+
+This level of performance has not been seen again in the three months 
+the system has been operating.
+
+Eleven days in April hit 6kW power at some point during the day. This happened only twice in May and once in April.
+
+```{r daily_max}
+daily_max_power_chart()
+```
+
+# Daily energy
+
+A similar story is told by daily total energy production. April 8-10 saw
+more than 45kWh generated each day; this level has never been reached again.
+
+May saw thirteen days with more than 40kWh generation; this level has not been
+reached since. The maximum to date in July is 37kWh.
+
+```{r daily_energy}
+daily_energy_chart()
+```
+
