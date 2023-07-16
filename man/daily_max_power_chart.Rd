@@ -2,10 +2,10 @@
 % Please edit documentation in R/viz.R
 \name{daily_max_power_chart}
 \alias{daily_max_power_chart}
-\title{Daily maximum power}
+\title{Daily maximum power generation}
 \usage{
 daily_max_power_chart()
 }
 \description{
-Daily maximum power
+Daily maximum power generation
 }
