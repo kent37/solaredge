@@ -10,7 +10,9 @@ power_chart = function(start_date=today()) {
   daily = power |> 
     filter(date >= start_date, date < end_date) |> 
     collect() |> 
-    mutate(time=hms::hms(as.numeric(time)))
+    mutate(time=hms::hms(as.numeric(time))) |> 
+    group_by(year, month, day) |> 
+    mutate(daily_max = max(value))
     
   energy = energy_table()
   energy = energy |> 
@@ -23,8 +25,16 @@ power_chart = function(start_date=today()) {
   days = diff(range(daily$day)) + 1
   daily_average = total_energy / days
   
+  month_days = as.double(end_date-start_date)
+  prediction = monthly_predictions()$kWh[month(start_date)]
+  
+  # Should we show the monthly estimate?
+  monthly_estimate = 
+    if_else(days==month_days, '',
+            str_glue('monthly est {round(month_days*daily_average, 0)} kWh, '))
+  
   ggplot(daily, aes(time, value/1000)) +
-    geom_line(linewidth=0.4, aes(group=day)) +
+    geom_line(linewidth=0.4, aes(group=day, color=daily_max>=6000)) +
     # geom_line(data=daily |> rename(group=day), aes(group=group),
     #           linewidth=0.1, color='lightgrey') +
     geom_text(data=energy, aes(label=label), x=0, y=4,
@@ -32,15 +42,18 @@ power_chart = function(start_date=today()) {
     scale_x_time(breaks=scales::date_breaks('6 hours'),
                  labels = hour) +
     scale_y_continuous(minor_breaks=NULL) +
-    labs(x='Time of day', y='KW',
+    scale_color_manual(values=c(`TRUE`='darkred', `FALSE`='grey40'),
+                      guide='none') +
+    labs(x='Time of day', y='kW',
          title=str_glue('Daily power generation (kW) ',
          '{format(start_date, "%B %Y")}'),
          subtitle=str_glue('Total energy generation: ',
-         '{round(total_energy, 0)} kWh, ',
-         'daily average {round(daily_average, 0)} kWh, ',
-         'monthly estimate {round(30*daily_average, 0)} kWh')) +
+         '{round(total_energy, 0)} kWh ({round(daily_average, 0)} kWh/day), {monthly_estimate}',
+         'predicted {prediction} kWh',
+         '\nDays with peak power of 6kW in red')) +
     facet_wrap(~day) +
-    theme_minimal()
+    theme_minimal() +
+    theme(plot.title=element_text(face='bold'))
 }
 
 #' Daily maximum power generation

@@ -1,5 +1,5 @@
 ---
-title: "Power and energy"
+title: "Peak power and energy - 1 Aldrich St"
 format:
   html:
     embed-resources: true
@@ -14,6 +14,10 @@ library(tidyverse)
 library(solaredge)
 
 ```
+
+This report details some concerns about the power generation of the 
+solar array installed at 1 Aldrich St, Northampton, and activated 
+April 7, 2023.
 
 ## Peak power
 
@@ -30,7 +34,14 @@ power_chart('2023-04-10')
 This level of performance has not been seen again in the three months 
 the system has been operating.
 
-Eleven days in April hit 6kW power at some point during the day. This happened only twice in May and once in April.
+```{r all_power}
+power_chart('2023-05-10')
+power_chart('2023-06-10')
+power_chart('2023-07-10')
+```
+
+Eleven days in April hit 6kW power at some point during the day. 
+This happened only three times in May, once in June and not at all in July.
 
 ```{r daily_max}
 daily_max_power_chart()
