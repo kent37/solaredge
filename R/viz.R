@@ -95,8 +95,10 @@ daily_max_power_histogram = function() {
     scale_y_continuous(breaks=~seq(0, .x[2], 5), minor_breaks=NULL) +
     labs(x='Maximum power (W)', y='Number of days',
          title='Daily maximum power generation') +
-    facet_wrap(~month, ncol=1, labeller=as_labeller(month.abb |> set_names(1:12))) +
-    theme_minimal()
+    facet_wrap(~month, ncol=1, labeller=as_labeller(month.name |> set_names(1:12))) +
+    theme_minimal() +
+    theme(plot.title=element_text(face='bold', size=rel(1.5)),
+          strip.text=element_text(face='bold', size=rel(1.1)))
 }
 
 #' Daily energy (kWh) for the year
@@ -107,14 +109,18 @@ daily_energy_chart = function() {
   daily = energy |> 
     collect()
   
+  daily = daily |> 
+    mutate(avg7=slider::slide_mean(value, before=3, after=3))
+  
   ggplot(daily, aes(date, value/1000))  +
     geom_col(just=0, aes(fill=value>40000)) +
+    geom_line(aes(y=avg7/1000), color='green3', linewidth=1) +
     scale_x_date(minor_breaks=NULL) +
     scale_fill_manual(values=c(`TRUE`='darkred', `FALSE`='grey40'),
                       guide='none') +
     labs(x='Date', y='kWh',
          title='Daily energy generation (kWh)',
-         subtitle='Days with 40kWh or more in red') +
+         subtitle='Days with 40kWh or more in red, 7-day average in green') +
     theme_minimal()
 }
 
@@ -130,8 +136,10 @@ daily_energy_histogram = function() {
     geom_histogram(binwidth=5, boundary=0) +
     labs(x='Daily energy generation (kWh)', y='Number of days',
          title=str_glue('Daily energy generation (kWh) ')) +
-    facet_wrap(~month, ncol=1, labeller=as_labeller(month.abb |> set_names(1:12))) +
-    theme_minimal()
+    facet_wrap(~month, ncol=1, labeller=as_labeller(month.name |> set_names(1:12))) +
+    theme_minimal() +
+    theme(plot.title=element_text(face='bold', size=rel(1.5)),
+          strip.text=element_text(face='bold', size=rel(1.1)))
 }
 
 #' Estimated daily usage vs generation
