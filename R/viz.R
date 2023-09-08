@@ -148,13 +148,42 @@ daily_usage_chart = function() {
   energy = energy_summary() |> 
     slice_tail(n=-1) # First date has no usage, only an end date
   
+  # Get predicted daily production
+  years = tibble(Year=range(year(energy$Date)))
+  gen_start = energy |> filter(generation>0) |> pull(start_date) |> min()
+  predictions = monthly_predictions() |> 
+    cross_join(years) |> 
+    mutate(start_date=as.Date(ISOdate(Year, Month, 1, tz='UTC')),
+           end_date=as.Date(start_date + dmonths(1)),
+           days_in_month=days_in_month(start_date),
+           est_daily_generation=kWh/days_in_month) |> 
+    filter(end_date>=gen_start, start_date<= max(energy$end_date))
+  
+  lw = 1
+  slw = 0.2
   ggplot(energy) +
-    geom_step(aes(start_date, daily_use, color='Usage')) +
-    geom_segment(aes(x=start_date, xend=end_date, y=daily_use, yend=daily_use, color='Usage')) +
-    geom_step(aes(start_date, daily_generation, color='Generation')) +
-    geom_segment(aes(x=start_date, xend=end_date, y=daily_generation, yend=daily_generation, color='Generation')) +
-    scale_x_date(date_breaks='month', date_labels='%b %y', minor_breaks=NULL) +
-    scale_color_manual('Average daily power', values=c(Usage='darkred', Generation='darkgreen')) +
+    geom_step(data=predictions,
+              aes(start_date, est_daily_generation, color='Estimate'),
+              linewidth=slw) +
+    geom_segment(data=predictions,
+              aes(x=start_date, xend=end_date, 
+                     y=est_daily_generation, yend=est_daily_generation, 
+                     color='Estimate'), linewidth=lw) +
+    geom_step(aes(start_date, daily_use, color='Usage'), linewidth=slw) +
+    geom_segment(aes(x=start_date, xend=end_date, 
+                     y=daily_use, yend=daily_use, color='Usage'),
+                 linewidth=lw) +
+    geom_step(aes(start_date, daily_generation, color='Generation'),
+              linewidth=slw) +
+    geom_segment(aes(x=start_date, xend=end_date, 
+                     y=daily_generation, yend=daily_generation, 
+                     color='Generation'),
+                 linewidth=lw) +
+    scale_x_date(date_breaks='month', date_labels="%b ’%y", minor_breaks=NULL) +
+    scale_color_manual('Average daily power', 
+                       values=c(Usage='darkred', 
+                                Generation='darkgreen',
+                                Estimate='darkblue')) +
     ylim(0, NA) +
     labs(x='End date', y='Average daily use (kWh)',
          title='Average daily energy generation and use (kWh)') +
