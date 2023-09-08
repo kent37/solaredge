@@ -34,14 +34,16 @@ power_chart('2023-04-10')
 This level of performance has not been seen again in the three months 
 the system has been operating.
 
-```{r all_power}
+```{r all_power, fig.height=6}
 power_chart('2023-05-10')
 power_chart('2023-06-10')
 power_chart('2023-07-10')
+power_chart('2023-08-10')
 ```
 
 Eleven days in April hit 6kW power at some point during the day. 
-This happened only three times in May, once in June and not at all in July.
+This happened only three times in May, once in June, not at all in July
+and twice in August.
 
 ```{r daily_max}
 daily_max_power_chart()
@@ -52,8 +54,8 @@ daily_max_power_chart()
 A similar story is told by daily total energy production. April 8-10 saw
 more than 45kWh generated each day; this level has never been reached again.
 
-May saw thirteen days with more than 40kWh generation; this level has not been
-reached since. The maximum to date in July is 37kWh.
+May saw thirteen days with more than 40kWh generation; this level was not
+reached at all in June and July and only three times in August.
 
 ```{r daily_energy}
 daily_energy_chart()
