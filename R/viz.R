@@ -101,6 +101,31 @@ daily_max_power_histogram = function() {
           strip.text=element_text(face='bold', size=rel(1.1)))
 }
 
+#' Monthly energy (kWh) compared to predicted
+#' @export
+monthly_energy_chart = function() {
+  energy = energy_table() |> 
+    group_by(year, month) |> 
+    summarize(kWh = sum(value)/1000, .groups='drop') |> 
+    collect() |> 
+    rename(Month=month)
+  
+  prediction = monthly_predictions()
+  
+  ggplot(energy, aes(Month, kWh)) +
+    geom_col(fill='darkgreen') +
+    geom_crossbar(data=prediction, aes(ymin=kWh, ymax=kWh),
+                  color='darkred', width=1) +
+    facet_wrap(~year, ncol=1) +
+    scale_x_continuous(breaks=1:12, labels=month.abb) +
+    labs(title='Monthly energy generation (kWh)',
+     subtitle='Monthly generation in green, prediction in red') +
+    theme_minimal()+
+    theme(plot.title=element_text(face='bold', size=rel(1.5)),
+          strip.text=element_text(face='bold', size=rel(1.1)))
+
+}
+
 #' Daily energy (kWh) for the year
 #' @export
 daily_energy_chart = function() {
