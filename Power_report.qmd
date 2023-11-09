@@ -11,6 +11,7 @@ execute:
 
 ```{r libs}
 library(tidyverse)
+library(gt)
 library(solaredge)
 
 ```
@@ -31,21 +32,13 @@ comes close to this performance but does not match it.
 power_chart('2023-04-10')
 ```
 
-This level of performance has not been seen again in the three months 
+This level of performance has not been seen again in the six months 
 the system has been operating.
-
-```{r all_power, fig.height=6}
-power_chart('2023-05-10')
-power_chart('2023-06-10')
-power_chart('2023-07-10')
-power_chart('2023-08-10')
-```
-
 Eleven days in April hit 6kW power at some point during the day. 
 This happened only three times in May, once in June, not at all in July
 and twice in August.
 
-```{r daily_max}
+```{r daily_max, fig.width=9}
 daily_max_power_chart()
 ```
 
@@ -55,9 +48,48 @@ A similar story is told by daily total energy production. April 8-10 saw
 more than 45kWh generated each day; this level has never been reached again.
 
 May saw thirteen days with more than 40kWh generation; this level was not
-reached at all in June and July and only three times in August.
+reached at all in June and July, only three times in August, and once 
+in September.
 
-```{r daily_energy}
+```{r daily_energy, fig.width=9}
 daily_energy_chart()
+```
+
+# Actual vs predicted
+
+Comparing actual monthly energy generation with the predictions in the PV Squared
+proposal, May greatly exceeded the prediction; all subsequent months fell
+short.
+
+```{r actual_vs_predicted}
+monthly_energy_chart() +
+  scale_x_continuous(breaks=5:10, labels=month.abb[5:10], limits=c(4,11))
+
+energy = energy_table() |> 
+  group_by(year, month) |> 
+  summarize(kWh = sum(value)/1000, .groups='drop') |> 
+  collect() |> 
+  rename(Month=month) |> 
+  filter(!Month %in% c(4, 11))
+
+prediction = monthly_predictions() |> filter(Month %in% energy$Month)
+
+prediction |> 
+  left_join(energy, by='Month', suffix=c('.Predicted', '.Actual')) |> 
+  mutate(kWh.Difference=kWh.Actual-kWh.Predicted,
+         Month=month.name[Month],
+         'Percent difference'=kWh.Difference/kWh.Predicted) |> 
+  select(-year) |> 
+  gt() |>
+  grand_summary_rows(columns=2:4, 
+                     fns=list(label='Total') ~ sum(.),
+                     fmt=~fmt_number(., decimals=0),
+                     missing_text='') |> 
+  fmt_number(columns=2:4, decimals=0) |> 
+  fmt_percent(columns=5, decimals=0) |> 
+  tab_spanner_delim('.') |> 
+  tab_header(title='Actual and predicted energy generation', 
+    subtitle='1 Aldrich St, 2023')
+
 ```
 

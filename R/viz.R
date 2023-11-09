@@ -70,13 +70,14 @@ daily_max_power_chart = function() {
   
   ggplot(daily_max, aes(date, max_power)) +
     geom_col(aes(fill=max_power>6000), just=0) +
-    scale_x_date(minor_breaks=NULL) +
+    scale_x_date(date_breaks='month', date_labels='%b', minor_breaks=NULL) +
     scale_fill_manual(values=c(`TRUE`='darkred', `FALSE`='grey40'),
                       guide='none') +
     labs(x='Date', y='Maximum power (W)',
          title='Daily maximum power generation',
          subtitle=('Peak days of 6kW in red')) +
-    theme_minimal()
+    theme_minimal() +
+    theme(axis.text.x=element_text(hjust=-0.2, vjust=10))
 }
 
 
@@ -139,14 +140,15 @@ daily_energy_chart = function() {
   
   ggplot(daily, aes(date, value/1000))  +
     geom_col(just=0, aes(fill=value>40000)) +
-    geom_line(aes(y=avg7/1000), color='green3', linewidth=1) +
-    scale_x_date(minor_breaks=NULL) +
+#    geom_line(aes(y=avg7/1000), color='green3', linewidth=1) +
+    scale_x_date(date_breaks='month', date_labels='%b', minor_breaks=NULL) +
     scale_fill_manual(values=c(`TRUE`='darkred', `FALSE`='grey40'),
                       guide='none') +
     labs(x='Date', y='kWh',
          title='Daily energy generation (kWh)',
-         subtitle='Days with 40kWh or more in red, 7-day average in green') +
-    theme_minimal()
+         subtitle='Days with 40kWh or more in red') +
+    theme_minimal() +
+    theme(axis.text.x=element_text(hjust=-0.2, vjust=10))
 }
 
 #' Histogram of daily energy (kWh) for the year
