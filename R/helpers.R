@@ -21,6 +21,7 @@ update_and_plot = function() {
 
 #' Read the PV2 predictions of monthly energy in kWh
 #' @returns A data.frame with columns Month, kWh
+#' @export
 monthly_predictions = function() {
   read_csv(here::here('misc/Monthly_estimates.csv'), 
            comment='#', show_col_types=FALSE)

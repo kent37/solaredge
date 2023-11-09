@@ -40,6 +40,7 @@ init_db = function(start_date) {
 
 #' Get a `dplyr` table backed by the Energy table
 #' @returns A table
+#' @export
 energy_table = function(envir=parent.frame()) {
   con = local_db(envir)
   dplyr::tbl(con, 'Energy')
