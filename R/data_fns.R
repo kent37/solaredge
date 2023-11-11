@@ -33,7 +33,7 @@ energy_generation = function(start_date, end_date, ...) {
 #' Read and munge historical meter values
 read_meter = function() {
   meter_path = here::here('misc/Meter_readings.csv')
-  meter = read_csv(meter_path, show_col_types=FALSE) |> 
+  meter = read_csv(meter_path, show_col_types=FALSE, comment='#') |> 
     mutate(Date=mdy(Date),
     meter_true = if_else(Meter<90000, Meter, Meter-100000),
     meter_usage = meter_true - lag(meter_true),
