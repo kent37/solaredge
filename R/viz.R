@@ -172,12 +172,14 @@ daily_energy_histogram = function() {
 #' Estimated daily usage vs generation
 #' @export
 daily_usage_chart = function() {
+  # Actual generation and usage
   energy = energy_summary() |> 
     slice_tail(n=-1) # First date has no usage, only an end date
+  generation = energy |> filter(generation>0)
+  gen_start = generation |> pull(start_date) |> min()
   
   # Get predicted daily production
-  years = tibble(Year=range(year(energy$Date)))
-  gen_start = energy |> filter(generation>0) |> pull(start_date) |> min()
+  years = tibble(Year=seq(min(year(energy$Date)), max(year(energy$Date))))
   predictions = monthly_predictions() |> 
     cross_join(years) |> 
     mutate(start_date=as.Date(ISOdate(Year, Month, 1, tz='UTC')),
@@ -200,9 +202,9 @@ daily_usage_chart = function() {
     geom_segment(aes(x=start_date, xend=end_date, 
                      y=daily_use, yend=daily_use, color='Usage'),
                  linewidth=lw) +
-    geom_step(aes(start_date, daily_generation, color='Generation'),
+    geom_step(data=generation, aes(start_date, daily_generation, color='Generation'),
               linewidth=slw) +
-    geom_segment(aes(x=start_date, xend=end_date, 
+    geom_segment(data=generation, aes(x=start_date, xend=end_date, 
                      y=daily_generation, yend=daily_generation, 
                      color='Generation'),
                  linewidth=lw) +
