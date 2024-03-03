@@ -158,5 +158,5 @@ get_connection = function() {
   # dbdir = 'misc/solaredge.sqlite'
   # DBI::dbConnect(RSQLite::SQLite(), dbdir)
   dbdir = here::here('misc/solaredge.duckdb')
-  DBI::dbConnect(duckdb::duckdb(), dbdir, read_only=FALSE)
+  DBI::dbConnect(duckdb::duckdb(dbdir=dbdir, read_only=FALSE))
 }
