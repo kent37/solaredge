@@ -70,14 +70,14 @@ daily_max_power_chart = function() {
   
   ggplot(daily_max, aes(date, max_power)) +
     geom_col(aes(fill=max_power>6000), just=0) +
-    scale_x_date(date_breaks='month', date_labels='%b', minor_breaks=NULL) +
+    scale_x_date(date_breaks='month', labels=scales::label_date_short(), minor_breaks=NULL) +
     scale_fill_manual(values=c(`TRUE`='darkred', `FALSE`='grey40'),
                       guide='none') +
     labs(x='Date', y='Maximum power (W)',
          title='Daily maximum power generation',
          subtitle=('Peak days of 6kW in red')) +
     theme_minimal() +
-    theme(axis.text.x=element_text(hjust=-0.2, vjust=10))
+    theme(axis.text.x=element_text(hjust=-0.2))
 }
 
 
@@ -141,14 +141,14 @@ daily_energy_chart = function() {
   ggplot(daily, aes(date, value/1000))  +
     geom_col(just=0, aes(fill=value>40000)) +
 #    geom_line(aes(y=avg7/1000), color='green3', linewidth=1) +
-    scale_x_date(date_breaks='month', date_labels='%b', minor_breaks=NULL) +
+    scale_x_date(date_breaks='month', labels=scales::label_date_short(), minor_breaks=NULL) +
     scale_fill_manual(values=c(`TRUE`='darkred', `FALSE`='grey40'),
                       guide='none') +
     labs(x='Date', y='kWh',
          title='Daily energy generation (kWh)',
          subtitle='Days with 40kWh or more in red') +
     theme_minimal() +
-    theme(axis.text.x=element_text(hjust=-0.2, vjust=10))
+    theme(axis.text.x=element_text(hjust=-0.2))
 }
 
 #' Histogram of daily energy (kWh) for the year
@@ -208,7 +208,7 @@ daily_usage_chart = function() {
                      y=daily_generation, yend=daily_generation, 
                      color='Generation'),
                  linewidth=lw) +
-    scale_x_date(date_breaks='month', date_labels="%b ’%y", minor_breaks=NULL) +
+    scale_x_date(date_breaks='month', labels=scales::label_date_short(), minor_breaks=NULL) +
     scale_color_manual('Average daily power', 
                        values=c(Usage='darkred', 
                                 Generation='darkgreen',
@@ -216,5 +216,6 @@ daily_usage_chart = function() {
     ylim(0, NA) +
     labs(x='End date', y='Average daily use (kWh)',
          title='Average daily energy generation and use (kWh)') +
-    theme_minimal()
+    theme_minimal() +
+    theme(axis.text.x=element_text(hjust=-0.2))
 }
