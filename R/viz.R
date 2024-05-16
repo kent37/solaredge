@@ -127,6 +127,50 @@ monthly_energy_chart = function() {
 
 }
 
+#' Difference between monthly energy (kWh) and predicted
+#' as a percent of predicted.
+#' @export
+monthly_discrepancy_chart = function() {
+  energy = energy_table() |> 
+    collect() |> 
+    clip_partial_month() |> 
+    group_by(year, month) |> 
+    summarize(kWh = sum(value)/1000,
+              date=min(date),
+              .groups='drop') |> 
+    collect() |> 
+    rename(Month=month)
+  
+  prediction = monthly_predictions()
+  
+  diffs = energy |> 
+    left_join(prediction, by='Month', suffix=c('', '.pred')) |> 
+    mutate(diff = kWh-kWh.pred, 
+           diff_pct = diff/kWh.pred,
+           color=case_when(
+             diff_pct >=0 ~ 'darkgreen',
+             diff_pct < -0.1 ~ 'red3',
+             .default = 'darkred'
+           ))
+  
+  subtitle = str_glue('{sum(diffs$diff_pct< -0.1)} out of {nrow(diffs)} months ',
+                      'were at least 10% below the predicted generation.')
+  ggplot(diffs, aes(date, diff_pct, fill=color)) +
+    geom_hline(yintercept=-0.1, color='lightgray', linetype=2) +
+    geom_col(position='dodge') +
+    scale_fill_identity(guide=NULL) +
+    scale_x_date(date_breaks='month', labels=scales::label_date_short(), minor_breaks=NULL) +
+    scale_y_continuous(labels=scales::label_percent(accuracy=1),
+                       minor_breaks=NULL) +
+    labs(title='Monthly energy generation vs predictions',
+         subtitle=subtitle,
+         x='',
+         y='Percent difference') +
+    theme_minimal()+
+    theme(plot.title=element_text(face='bold', size=rel(1.5)),
+          strip.text=element_text(face='bold', size=rel(1.1)))
+}
+  
 #' Daily energy (kWh) for the year
 #' @export
 daily_energy_chart = function() {
