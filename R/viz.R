@@ -201,13 +201,14 @@ daily_energy_histogram = function() {
   energy = energy_table()
 
   daily = energy |> 
-    collect()
+    collect() |> 
+    mutate(month_name = factor(month.abb[month], levels=month.abb))
   
   ggplot(daily, aes(value/1000))  +
     geom_histogram(binwidth=5, boundary=0) +
     labs(x='Daily energy generation (kWh)', y='Number of days',
          title=str_glue('Daily energy generation (kWh) ')) +
-    facet_wrap(~month, ncol=1, labeller=as_labeller(month.name |> set_names(1:12))) +
+    facet_grid(month_name ~ year) +
     theme_minimal() +
     theme(plot.title=element_text(face='bold', size=rel(1.5)),
           strip.text=element_text(face='bold', size=rel(1.1)))
