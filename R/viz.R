@@ -14,15 +14,20 @@ power_chart = function(start_date=today()) {
     group_by(year, month, day) |> 
     mutate(daily_max = max(value))
     
+  last_full_day = daily |> 
+    filter(time==as_hms('23:45:00')) |> 
+    pull(day) |> 
+    max()
+  
   energy = energy_table()
   energy = energy |> 
-    filter(year==year(start_date), month==month(start_date)) |> 
+    filter(year==year(start_date), month==month(start_date), day <= last_full_day) |> 
     collect() |> 
     mutate(kwh = value / 1000,
            label=str_glue('{round(kwh, 1)} kWh'))
   
   total_energy = sum(energy$kwh)
-  days = diff(range(daily$day)) + 1
+  days = last_full_day
   daily_average = total_energy / days
   
   month_days = as.double(end_date-start_date)
