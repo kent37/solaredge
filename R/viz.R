@@ -219,9 +219,9 @@ daily_energy_histogram = function() {
           strip.text=element_text(face='bold', size=rel(1.1)))
 }
 
-#' Estimated daily usage vs generation
+#' Actual daily usage vs actual and estimated generation
 #' @export
-daily_usage_chart = function() {
+daily_usage_vs_generation = function() {
   # Actual generation and usage
   energy = energy_summary() |> 
     slice_tail(n=-1) # First date has no usage, only an end date
@@ -266,6 +266,41 @@ daily_usage_chart = function() {
     ylim(0, NA) +
     labs(x='End date', y='Average daily use (kWh)',
          title='Average daily energy generation and use (kWh)') +
+    theme_minimal() +
+    theme(axis.text.x=element_text(hjust=-0.2))
+}
+
+
+
+#' Actual daily usage by year
+#' @export
+daily_usage = function() {
+  # Actual usage
+  energy = energy_summary() |> 
+    mutate(year=factor(year(start_date)),
+           year_start = yday(start_date),
+           year_end = yday(end_date),
+           year_end = if_else(year_end < year_start, year_end+365, year_end)) |> 
+    slice_tail(n=-1) # First date has no usage, only an end date
+
+  # Make break points and labels
+  breaks = tibble(
+    date=seq.Date(ymd('2023-01-01'), ymd('2023-12-1'), by='month'),
+    year_day=yday(date),
+    label=format(date, '%b %d'))
+  
+  lw = 1
+  slw = 0.2
+  ggplot(energy) +
+    geom_step(aes(year_start, daily_use, color=year, group=year)) +
+    geom_segment(aes(x=year_start, xend=year_end,
+                     y=daily_use, yend=daily_use, color=year),
+                 linewidth=lw) +
+    scale_x_continuous(breaks=breaks$year_day, labels=breaks$label, minor_breaks=NULL) +
+    scale_color_brewer(palette='Set1') +
+    ylim(0, NA) +
+    labs(x='Date', y='Average daily use (kWh)', color='Year',
+         title='Average daily energy use (kWh)') +
     theme_minimal() +
     theme(axis.text.x=element_text(hjust=-0.2))
 }
