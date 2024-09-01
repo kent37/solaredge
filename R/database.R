@@ -88,6 +88,9 @@ update_energy = function() {
     cat('Received', nrow(new_energy), 'new entries.\n')
   }
   
+  # Format the time field to write correctly with duckdb 1.0
+  new_energy$time = format(new_energy$time)
+  
   DBI::dbWriteTable(con, name='Energy', value=new_energy,
                    append=TRUE, overwrite=FALSE)
   
@@ -135,6 +138,9 @@ update_power = function() {
   } else {
     cat('Received', nrow(new_power), 'new entries.\n')
   }
+  
+  # Format the time field to write correctly with duckdb 1.0
+  new_power$time = format(new_power$time)
   
   DBI::dbWriteTable(con, name='Power', value=new_power,
                    append=TRUE, overwrite=FALSE)
