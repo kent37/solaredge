@@ -185,19 +185,37 @@ daily_energy_chart = function() {
     collect()
   
   daily = daily |> 
-    mutate(avg7=slider::slide_mean(value, before=3, after=3))
+    mutate(year_day = yday(date))
+
+  # Make break points and labels
+  breaks = tibble(
+    date=seq.Date(ymd('2023-01-01'), ymd('2023-12-1'), by='month'),
+    year_day=yday(date),
+    label=format(date, '%b'))
   
-  ggplot(daily, aes(date, value/1000))  +
-    geom_col(just=0, aes(fill=value>40000)) +
-#    geom_line(aes(y=avg7/1000), color='green3', linewidth=1) +
-    scale_x_date(date_breaks='month', labels=scales::label_date_short(), minor_breaks=NULL) +
-    scale_fill_manual(values=c(`TRUE`='darkred', `FALSE`='grey40'),
-                      guide='none') +
-    labs(x='Date', y='kWh',
-         title='Daily energy generation (kWh)',
-         subtitle='Days with 40kWh or more in red') +
+  ggplot(daily, aes(year_day, value/1000)) +
+    geom_col(just=0, position='dodge', fill='steelblue', width=1) +
+    scale_x_continuous(breaks=breaks$year_day, labels=breaks$label, minor_breaks=NULL) +
+    scale_fill_brewer(palette='Set1') +
+    facet_wrap(~year, ncol=1) +
+    labs(x='', y='kWh',
+         title='Daily energy generation (kWh)') +
     theme_minimal() +
-    theme(axis.text.x=element_text(hjust=-0.2))
+    theme(axis.text.x=element_text(hjust=-0.2),
+          plot.title=element_text(face='bold', size=rel(1.5)),
+          strip.text=element_text(face='bold', size=rel(1.1)))
+  
+  # ggplot(daily, aes(date, value/1000))  +
+  #   geom_col(just=0, aes(fill=value>40000)) +
+  #   scale_x_date(date_breaks='month', 
+  #                labels=scales::label_date_short(), minor_breaks=NULL) +
+  #   scale_fill_manual(values=c(`TRUE`='darkred', `FALSE`='grey40'),
+  #                     guide='none') +
+  #   labs(x='Date', y='kWh',
+  #        title='Daily energy generation (kWh)',
+  #        subtitle='Days with 40kWh or more in red') +
+  #   theme_minimal() +
+  #   theme(axis.text.x=element_text(hjust=-0.2))
 }
 
 #' Histogram of daily energy (kWh) for the year
