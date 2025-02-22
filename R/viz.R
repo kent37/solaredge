@@ -42,7 +42,8 @@ power_chart = function(start_date=today()) {
     geom_line(linewidth=0.4, aes(group=day, color=daily_max>=6000)) +
     # geom_line(data=daily |> rename(group=day), aes(group=group),
     #           linewidth=0.1, color='lightgrey') +
-    geom_text(data=energy, aes(label=label), x=0, y=4,
+    geom_text(data=energy, aes(label=label), x=0, 
+              y=floor(max(daily$value/1000)),
               hjust=-0.1, vjust=1.2) +
     scale_x_time(breaks=scales::date_breaks('6 hours'),
                  labels = hour) +
