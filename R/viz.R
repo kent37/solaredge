@@ -133,6 +133,34 @@ monthly_energy_chart = function() {
 
 }
 
+#' Average daily power generation by month.
+#' @export
+average_daily_power = function() {
+  by_time = power_table() |> 
+  group_by(month, time) |> 
+  summarize(value=mean(value), .groups='drop') |>
+  collect() |> 
+  mutate(time=hms::hms(as.numeric(time)))
+
+  # Create a named vector for month labels
+  month_labels <- setNames(
+    month.name,
+    1:12
+  )
+
+  ggplot(by_time, aes(time, value/1000)) +
+    geom_line() +
+      scale_x_time(breaks=scales::date_breaks('6 hours'),
+                   labels = hour) +
+      scale_y_continuous(minor_breaks=NULL) +
+    facet_wrap(~month, labeller = as_labeller(month_labels)) +
+    labs(x='Time of day', y='kW',
+         title='Average daily power generation per month (kW) ') +
+    theme_minimal() +
+    theme(plot.title=element_text(face='bold'),
+          strip.text = element_text(face = "bold"),)
+}
+
 #' Difference between monthly energy (kWh) and predicted
 #' as a percent of predicted.
 #' @export
