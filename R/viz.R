@@ -70,15 +70,21 @@ daily_max_power_chart = function() {
     summarize(.by=c(year, month, day), 
               max_power = max(value),
               date=as.Date(min(date))) |> 
-    collect()
+    collect() |> 
+    mutate(year_day=yday(date))
 
-  max_max = max(daily_max$max_power)
+  breaks = tibble(
+    date=seq.Date(ymd('2023-01-01'), ymd('2023-12-1'), by='month'),
+    year_day=yday(date),
+    label=format(date, '%b'))
   
-  ggplot(daily_max, aes(date, max_power)) +
-    geom_col(aes(fill=max_power>6000), just=0) +
-    scale_x_date(date_breaks='month', labels=scales::label_date_short(), minor_breaks=NULL) +
+  ggplot(daily_max, aes(year_day, max_power)) +
+    geom_col(aes(fill=max_power>6000), just=0, width=1) +
+#    scale_x_date(date_breaks='month', labels=scales::label_date_short(), minor_breaks=NULL) +
+    scale_x_continuous(breaks=breaks$year_day, labels=breaks$label, minor_breaks=NULL) +
     scale_fill_manual(values=c(`TRUE`='darkred', `FALSE`='grey40'),
                       guide='none') +
+    facet_wrap(~year, ncol=1) +
     labs(x='Date', y='Maximum power (W)',
          title='Daily maximum power generation',
          subtitle=('Peak days of 6kW in red')) +
@@ -234,17 +240,6 @@ daily_energy_chart = function() {
           plot.title=element_text(face='bold', size=rel(1.5)),
           strip.text=element_text(face='bold', size=rel(1.1)))
   
-  # ggplot(daily, aes(date, value/1000))  +
-  #   geom_col(just=0, aes(fill=value>40000)) +
-  #   scale_x_date(date_breaks='month', 
-  #                labels=scales::label_date_short(), minor_breaks=NULL) +
-  #   scale_fill_manual(values=c(`TRUE`='darkred', `FALSE`='grey40'),
-  #                     guide='none') +
-  #   labs(x='Date', y='kWh',
-  #        title='Daily energy generation (kWh)',
-  #        subtitle='Days with 40kWh or more in red') +
-  #   theme_minimal() +
-  #   theme(axis.text.x=element_text(hjust=-0.2))
 }
 
 #' Histogram of daily energy (kWh) for the year
