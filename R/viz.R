@@ -55,7 +55,7 @@ power_chart = function(start_date=today()) {
          '{format(start_date, "%B %Y")}'),
          subtitle=str_glue('Total energy generation: ',
          '{round(total_energy, 0)} kWh ({round(daily_average, 0)} kWh/day), {monthly_estimate}',
-         'predicted {prediction} kWh',
+         'predicted {round(prediction, 0)} kWh',
          '\nDays with peak power of 6kW in red')) +
     facet_wrap(~day) +
     theme_minimal() +

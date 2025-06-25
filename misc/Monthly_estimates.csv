@@ -1,14 +1,29 @@
-# Monthly energy estimates from Johnson - Northampton Energy Graph.pdf
+# Monthly energy estimates from SolarEdge dashboard
 Month,kWh
-1,191
-2,349
-3,748
-4,760
-5,834
-6,792
-7,854
-8,844
-9,753
-10,435
-11,243
-12,188
+1,189.09
+2,345.51
+3,740.52
+4,744.876
+5,817.4034
+6,776.2392
+7,837.0054
+8,827.2044
+9,738.0153
+10,426.3435
+11,238.1643
+12,184.2588
+#
+# Previous monthly energy estimates digitized from
+# Johnson - Northampton Energy Graph.pdf
+# 1,191
+# 2,349
+# 3,748
+# 4,760
+# 5,834
+# 6,792
+# 7,854
+# 8,844
+# 9,753
+# 10,435
+# 11,243
+# 12,188
