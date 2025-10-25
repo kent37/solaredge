@@ -329,7 +329,7 @@ daily_usage = function() {
   breaks = tibble(
     date=seq.Date(ymd('2023-01-01'), ymd('2023-12-1'), by='month'),
     year_day=yday(date),
-    label=format(date, '%b %d'))
+    label=format(date, '%b'))
   
   lw = 1
   slw = 0.2
@@ -344,5 +344,5 @@ daily_usage = function() {
     labs(x='Date', y='Average daily use (kWh)', color='Year',
          title='Average daily energy use (kWh)') +
     theme_minimal() +
-    theme(axis.text.x=element_text(hjust=-0.2))
+    theme(axis.text.x=element_text(hjust=-0.4))
 }
