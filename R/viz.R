@@ -263,13 +263,19 @@ daily_energy_histogram = function() {
 
 #' Actual daily usage vs actual and estimated generation
 #' @export
-daily_usage_vs_generation = function() {
+daily_usage_vs_generation = function(include_predictions=FALSE) {
   # Actual generation and usage
   energy = energy_summary() |> 
     slice_tail(n=-1) # First date has no usage, only an end date
   generation = energy |> filter(generation>0)
   gen_start = generation |> pull(start_date) |> min()
   
+  # Summary of production and use
+  use_summary = generation |> 
+    summarize(generation = sum(generation),
+              use = sum(use),
+              net = use-generation,
+              gen_pct = generation/use)
   # Get predicted daily production
   years = tibble(Year=seq(min(year(energy$Date)), max(year(energy$Date))))
   predictions = monthly_predictions() |> 
@@ -282,14 +288,7 @@ daily_usage_vs_generation = function() {
   
   lw = 1
   slw = 0.2
-  ggplot(energy) +
-    geom_step(data=predictions,
-              aes(start_date, est_daily_generation, color='Estimate'),
-              linewidth=slw) +
-    geom_segment(data=predictions,
-              aes(x=start_date, xend=end_date, 
-                     y=est_daily_generation, yend=est_daily_generation, 
-                     color='Estimate'), linewidth=lw) +
+  p = ggplot(energy) +
     geom_step(aes(start_date, daily_use, color='Usage'), linewidth=slw) +
     geom_segment(aes(x=start_date, xend=end_date, 
                      y=daily_use, yend=daily_use, color='Usage'),
@@ -300,16 +299,32 @@ daily_usage_vs_generation = function() {
                      y=daily_generation, yend=daily_generation, 
                      color='Generation'),
                  linewidth=lw) +
-    scale_x_date(date_breaks='month', labels=scales::label_date_short(), minor_breaks=NULL) +
+    scale_x_date(date_breaks='month', labels=scales::label_date_short(), 
+                 minor_breaks=NULL) +
     scale_color_manual('Average daily power', 
                        values=c(Usage='darkred', 
                                 Generation='darkgreen',
                                 Estimate='darkblue')) +
     ylim(0, NA) +
     labs(x='End date', y='Average daily use (kWh)',
-         title='Average daily energy generation and use (kWh)') +
+         title='Average daily energy generation and use (kWh)',
+         subtitle=str_glue('Since {format(gen_start, "%B %Y")}, ',
+         '{use_summary$gen_pct |> scales::percent()} of energy used ',
+         'was generated on site')) +
     theme_minimal() +
     theme(axis.text.x=element_text(hjust=-0.2))
+  
+  if (include_predictions) {
+    p = p  +
+    geom_step(data=predictions,
+              aes(start_date, est_daily_generation, color='Estimate'),
+              linewidth=slw) +
+    geom_segment(data=predictions,
+              aes(x=start_date, xend=end_date, 
+                     y=est_daily_generation, yend=est_daily_generation, 
+                     color='Estimate'), linewidth=lw)
+  }
+  p
 }
 
 
