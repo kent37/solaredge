@@ -4,7 +4,7 @@
 \alias{daily_usage_vs_generation}
 \title{Actual daily usage vs actual and estimated generation}
 \usage{
-daily_usage_vs_generation()
+daily_usage_vs_generation(include_predictions = FALSE)
 }
 \description{
 Actual daily usage vs actual and estimated generation

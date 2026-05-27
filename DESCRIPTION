@@ -10,7 +10,6 @@ Description: Reads solar panel production data from the SolarEdge
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
 Depends: 
     DBI,
     dbplyr,
@@ -30,3 +29,4 @@ Depends:
     tibble,
     tidyr,
     withr
+Config/roxygen2/version: 8.0.0

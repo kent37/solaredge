@@ -329,6 +329,28 @@ daily_usage_vs_generation = function(include_predictions=FALSE) {
 
 
 
+#' Quarterly energy generation, grouped for year-over-year comparison
+#' @export
+quarterly_energy_chart = function() {
+  q_labels = c("Mar–Jun", "Jun–Sep", "Sep–Dec", "Dec–Mar")
+
+  quarters = quarterly_energy() |>
+    mutate(
+      year  = factor(year(start_date)),
+      q_num = match(month(start_date), c(3L, 6L, 9L, 12L))
+    )
+
+  ggplot(quarters, aes(q_num, kwh, fill = year)) +
+    geom_col(position = "dodge") +
+    scale_x_continuous(breaks = 1:4, labels = q_labels, minor_breaks = NULL) +
+    scale_y_continuous(minor_breaks = NULL) +
+    scale_fill_brewer(palette = "Set1") +
+    labs(x = "Quarter", y = "Energy (kWh)", fill = "Year",
+         title = "Quarterly energy generation (kWh)") +
+    theme_minimal() +
+    theme(plot.title = element_text(face = "bold", size = rel(1.5)))
+}
+
 #' Actual daily usage by year
 #' @export
 daily_usage = function() {
