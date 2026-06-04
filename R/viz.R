@@ -300,7 +300,7 @@ daily_usage_vs_generation = function(include_predictions=FALSE) {
                      color='Generation'),
                  linewidth=lw) +
     scale_x_date(date_breaks='month', labels=scales::label_date_short(), 
-                 minor_breaks=NULL) +
+                 minor_breaks=NULL, guide = guide_axis(check.overlap = TRUE)) +
     scale_color_manual('Average daily power', 
                        values=c(Usage='darkred', 
                                 Generation='darkgreen',
