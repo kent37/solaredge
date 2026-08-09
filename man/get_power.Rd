@@ -16,5 +16,6 @@ A data frame with columns \code{date}, \code{value}, \code{unit},
 \code{year}, \code{month}, \code{day}, \code{time}
 }
 \description{
-Get detailed power data
+Requests spanning more than one month are split into chunks, as the
+SolarEdge \code{powerDetails} API rejects longer periods.
 }
