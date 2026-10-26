@@ -14,7 +14,7 @@ Depends:
     DBI,
     dbplyr,
     dplyr,
-    duckdb,
+    duckdb (>= 2.0.0),
     ggplot2,
     ggridges,
     here,
